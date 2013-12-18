@@ -8,122 +8,127 @@
 #include "fs/dcache.h"
 #include "fs/icache.h"
 
-namespace tablefs {
+//namespace tablefs {
 
-class TableFS {
-public:
-  ~TableFS() {
-  }
+struct TableFS {
 
-  void SetState(FileSystemState* state);
-
-  void* Init(struct fuse_conn_info *conn);
-
-  void Destroy(void * data);
-
-  int GetAttr(const char *path, struct stat *statbuf);
-
-  int Open(const char *path, struct fuse_file_info *fi);
-
-  int Read(const char* path, char *buf, size_t size,
-           off_t offset, struct fuse_file_info *fi);
-
-  int Write(const char* path, const char *buf, size_t size,
-            off_t offset, struct fuse_file_info *fi);
-
-  int Truncate(const char *path, off_t offset);
-
-  int Fsync(const char *path, int datasync, struct fuse_file_info *fi);
-
-  int Release(const char *path, struct fuse_file_info *fi);
-
-  int Readlink(const char *path, char *buf, size_t size);
-
-  int Symlink(const char *target, const char *path);
-
-  int Unlink(const char *path);
-
-  int MakeNode(const char *path, mode_t mode, dev_t dev);
-
-  int MakeDir(const char *path, mode_t mode);
-
-  int OpenDir(const char *path, struct fuse_file_info *fi);
-
-  int ReadDir(const char *path, void *buf, fuse_fill_dir_t filler,
-              off_t offset, struct fuse_file_info *fi);
-
-  int ReleaseDir(const char *path, struct fuse_file_info *fi);
-
-  int RemoveDir(const char *path);
-
-  int Rename(const char *new_path, const char *old_path);
-
-  int Access(const char *path, int mask);
-
-  int UpdateTimens(const char *path, const struct timespec tv[2]);
-
-  int Chmod(const char *path, mode_t mode);
-
-  int Chown(const char *path, uid_t uid, gid_t gid);
-
-  void Compact();
-
-  bool GetStat(std::string stat, std::string* value);
-
-private:
   FileSystemState *state_;
   LevelDBAdaptor* metadb;
-  InodeCache *inode_cache;
-  DentryCache *dentry_cache;
-  InodeMutex fstree_lock;
+  struct InodeCache *inode_cache;
+  struct DentryCache *dentry_cache;
+  struct InodeMutex *fstree_lock;
   bool flag_fuse_enabled;
+  struct TableFSTestWrapper *tablefstestwrapper;
+};
 
-  inline int FSError(const char *error_message);
+typedef struct TableFS TableFS;
+/*public:
+  ~TableFS() {
+  }
+  */
 
-  inline void DeleteDBFile(tfs_inode_t inode_id, int filesize);
+  void TableFS_SetState(TableFS *,FileSystemState* state);
 
-  inline void GetDiskFilePath(char *path, tfs_inode_t inode_id);
+  inline void* TableFS_Init(TableFS *,struct fuse_conn_info *conn);
 
-  inline int OpenDiskFile(const tfs_inode_header* iheader, int flags);
+  void TableFS_Destroy(TableFS *,void * data);
 
-  inline int TruncateDiskFile(tfs_inode_t inode_id, off_t new_size);
+  int TableFS_GetAttr(TableFS *,const char *path, struct stat *statbuf);
 
-  inline ssize_t MigrateDiskFileToBuffer(tfs_inode_t inode_it,
+  int TableFS_Open(TableFS *,const char *path, struct fuse_file_info *fi);
+
+  int TableFS_Read(TableFS *,const char* path, char *buf, size_t size,
+           off_t offset, struct fuse_file_info *fi);
+
+  int TableFS_Write(TableFS *,const char* path, const char *buf, size_t size,
+            off_t offset, struct fuse_file_info *fi);
+
+  int TableFS_Truncate(TableFS *,const char *path, off_t offset);
+
+  int TableFS_Fsync(TableFS *,const char *path, int datasync, struct fuse_file_info *fi);
+
+  int TableFS_Release(TableFS *,const char *path, struct fuse_file_info *fi);
+
+  int TableFS_Readlink(TableFS *,const char *path, char *buf, size_t size);
+
+  int TableFS_Symlink(TableFS *,const char *target, const char *path);
+
+  int TableFS_Unlink(TableFS *,const char *path);
+
+  int TableFS_MakeNode(TableFS *,const char *path, mode_t mode, dev_t dev);
+
+  int TableFS_MakeDir(TableFS *,const char *path, mode_t mode);
+
+  int TableFS_OpenDir(TableFS *,const char *path, struct fuse_file_info *fi);
+
+  int TableFS_ReadDir(TableFS *,const char *path, void *buf, fuse_fill_dir_t filler,
+              off_t offset, struct fuse_file_info *fi);
+
+  int TableFS_ReleaseDir(TableFS *,const char *path, struct fuse_file_info *fi);
+
+  int TableFS_RemoveDir(TableFS *,const char *path);
+
+  int TableFS_Rename(TableFS *,const char *new_path, const char *old_path);
+
+  int TableFS_Access(TableFS *,const char *path, int mask);
+
+  int TableFS_UpdateTimens(TableFS *,const char *path, const struct timespec tv[2]);
+
+  int TableFS_Chmod(TableFS *,const char *path, mode_t mode);
+
+  int TableFS_Chown(TableFS *,const char *path, uid_t uid, gid_t gid);
+
+  void TableFS_Compact(TableFS *);
+
+  bool TableFS_GetStat(TableFS *,char *stat, char ** value);
+
+
+  inline int TableFS_FSError(TableFS *,const char *error_message);
+
+  inline void TableFS_DeleteDBFile(TableFS *,tfs_inode_t inode_id, int filesize);
+
+  inline void TableFS_GetDiskFilePath(TableFS *,char *path, tfs_inode_t inode_id);
+
+  inline int TableFS_OpenDiskFile(TableFS *,const tfs_inode_header* iheader, int flags);
+
+  inline int TableFS_TruncateDiskFile(TableFS *,tfs_inode_t inode_id, off_t new_size);
+
+  inline ssize_t TableFS_MigrateDiskFileToBuffer(TableFS *,tfs_inode_t inode_it,
                                          char* buffer, size_t size);
 
-  int MigrateToDiskFile(InodeCacheHandle* handle, int &fd, int flags);
+  int TableFS_MigrateToDiskFile(TableFS *,InodeCacheHandle* handle, int *fd, int flags);
 
-  inline void CloseDiskFile(int& fd_);
+  inline void TableFS_CloseDiskFile(TableFS *,int fd_);		
 
-  inline void InitStat(struct stat &statbuf,
+  inline void TableFS_InitStat(TableFS *,struct stat *statbuf,
                        tfs_inode_t inode,
                        mode_t mode,
                        dev_t dev);
-
-  tfs_inode_val_t InitInodeValue(tfs_inode_t inum,
+/*
+  tfs_inode_val_t TableFS_InitInodeValue(TableFS *,tfs_inode_t inum,
                                  mode_t mode,
                                  dev_t dev,
                                  leveldb::Slice filename);
 
-  std::string InitInodeValue(const std::string& old_value,
+  char* TableFS_InitInodeValue(TableFS *,const char *old_value,
                              leveldb::Slice filename);
-
-  void FreeInodeValue(tfs_inode_val_t &ival);
-
-  bool ParentPathLookup(const char* path,
-                        tfs_meta_key_t &key,
+*/
+ /* void TableFS_FreeInodeValue(TableFS *,tfs_inode_val_t *ival);
+*/
+ /* bool TableFS_ParentPathLookup(TableFS *,const char* path,
+                        tfs_meta_key_t *key,
                         tfs_inode_t &inode_in_search,
                         const char* &lastdelimiter);
-
-  inline bool PathLookup(const char *path,
+*//*
+  inline bool TableFS_PathLookup_Slice(TableFS *,const char *path,
                          tfs_meta_key_t &key,
                          leveldb::Slice &filename);
+*/
+  inline bool TableFS_PathLookup(TableFS *,const char *path,
+                         tfs_meta_key_t *key);
 
-  inline bool PathLookup(const char *path,
-                         tfs_meta_key_t &key);
+//  friend class TableFSTestWrapper;             added in struct
 
-  friend class TableFSTestWrapper;
-};
 
-}
+
 #endif

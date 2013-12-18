@@ -1,3 +1,4 @@
+#ifdef SUPPORTED
 #include <vector>
 #include <string>
 #include <fcntl.h>
@@ -805,4 +806,4 @@ int main(int argc, char *argv[]) {
   bench.Run();
   return 0;
 }
-
+#endif

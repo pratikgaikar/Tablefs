@@ -1,3 +1,4 @@
+#ifdef SUPPORTED
 #ifndef FSWRAPPER_H_
 #define FSWRAPPER_H_
 
@@ -258,4 +259,5 @@ public:
 
 }
 
+#endif
 #endif

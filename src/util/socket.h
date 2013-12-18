@@ -1,3 +1,4 @@
+#ifdef SUPPORTED
 /*
  *   C++ sockets on Unix and Windows
  *   Copyright (C) 2002
@@ -336,4 +337,5 @@ private:
   void setBroadcast();
 };
 
+#endif
 #endif

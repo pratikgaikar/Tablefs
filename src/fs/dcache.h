@@ -1,4 +1,5 @@
-/*
+
+  /*
  * icache.h
  *
  *  Created on: Aug 15, 2011
@@ -10,19 +11,22 @@
 
 #include "fs/tfs_inode.h"
 #include "port/port.h"
-#include "util/hash.h"
-#include <unordered_map>
-#include <list>
+#include <stdlib.h>
+#include <stdbool.h>
+//#include <unordered_map>
+//#include <list>
 
-namespace tablefs {
-
+//namespace tablefs {
 struct DentryCacheComp {
+#ifdef UNSUPPORTED
   bool operator() (const tfs_meta_key_t &lhs, const tfs_meta_key_t &rhs) const {
     return (lhs.hash_id == rhs.hash_id) && (lhs.inode_id == rhs.inode_id);
   }
+#endif
 };
 
 struct DentryCacheHash {
+#ifdef UNSUPPORTED
   std::size_t operator()(const tfs_meta_key_t& x) const
   {
     std::size_t seed = 0;
@@ -30,37 +34,40 @@ struct DentryCacheHash {
     seed ^= x.hash_id + 0x9e3779b9 + (seed<<6) + (seed>>2);
     return seed;
   }
+#endif
 };
-
-class DentryCache {
-public:
+//class DentryCache {
+//public:
+#ifdef UNSUPPORTED
   typedef std::pair<tfs_meta_key_t, tfs_inode_t> Entry;
   typedef std::list<Entry> CacheList;
   typedef std::unordered_map<tfs_meta_key_t, std::list<Entry>::iterator,
             DentryCacheHash, DentryCacheComp> CacheMap;
+#endif
 
-  DentryCache(size_t size) : maxsize(size) {}
+struct DentryCache{
+  size_t maxsize;
+};
+typedef struct DentryCache DentryCache;
+  
+void tfs_DentryCache_constructor(DentryCache *,size_t);
 
-  bool Find(tfs_meta_key_t &key, tfs_inode_t &value);
+bool tfs_DentryCache_Find (DentryCache *,tfs_meta_key_t *, tfs_inode_t *);
 
-  void Insert(tfs_meta_key_t &key, const tfs_inode_t &value);
+void tfs_DentryCache_Insert (DentryCache *,tfs_meta_key_t *, const tfs_inode_t *);
 
-  void Evict(tfs_meta_key_t &key);
+void tfs_DentryCache_Evict(DentryCache *,tfs_meta_key_t *);
 
-  void GetSize(size_t &size_cache_list, size_t &size_cache_map) {
-    size_cache_map = cache.size();
-    size_cache_list = lookup.size();
-  }
 
-  virtual ~DentryCache();
+  //virtual ~DentryCache();
 
-private:
+/*private:
   size_t maxsize;
   CacheList cache;
   CacheMap lookup;
 
   leveldb::port::Mutex cache_mutex;
 };
-
-}
+*/
+//}
 #endif /* ICACHE_H_ */

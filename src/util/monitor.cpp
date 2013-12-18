@@ -1,3 +1,4 @@
+#ifdef SUPPORTED
 #include "util/monitor.h"
 #include <stdio.h>
 #include <string.h>
@@ -321,3 +322,4 @@ void Monitor::ReportToFile() {
 }
 
 }
+#endif

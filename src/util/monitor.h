@@ -1,3 +1,4 @@
+#ifdef SUPPORTED
 #ifndef MONITOR_H_
 #define MONITOR_H_
 #include <string>
@@ -65,4 +66,5 @@ public:
 
 }
 
+#endif
 #endif

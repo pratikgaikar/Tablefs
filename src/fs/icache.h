@@ -1,13 +1,14 @@
+//#ifdef SUPPORTED
 #ifndef _META_MANAGER_H_
 #define _META_MANAGER_H_
 
 #include "adaptor/leveldb_adaptor.h"
 #include "fs/inodemutex.h"
 #include "fs/tfs_inode.h"
-#include "leveldb/cache.h"
+//#include "leveldb/cache.h"
 #include "port/port.h"
-
-namespace tablefs {
+#include <string.h>
+//namespace tablefs {
 
 enum InodeAccessMode {
   INODE_READ = 0,
@@ -23,62 +24,57 @@ enum InodeState {
 
 struct InodeCacheHandle {
   tfs_meta_key_t key_;
-  std::string value_;
-  InodeAccessMode mode_;
+  char *value_;
+  enum InodeAccessMode mode_;
 
-  leveldb::Cache::Handle* pointer;
-  static int object_count;
-
-  InodeCacheHandle():
-    mode_(INODE_READ) {
-    ++object_count;
-  }
-
-  InodeCacheHandle(const tfs_meta_key_t &key,
-                   const std::string &value,
-                   InodeAccessMode mode):
-    key_(key), value_(value), mode_(mode) {
-    ++object_count;
-  }
-
-  ~InodeCacheHandle() {
-    --object_count;
-  }
+  //leveldb::Cache::Handle* pointer;
+  int object_count;
 };
+typedef struct InodeCacheHandle InodeCacheHandle;
 
-class InodeCache {
-public:
-  static LevelDBAdaptor* metadb_;
-  leveldb::Cache* cache;
 
-  InodeCache(LevelDBAdaptor *metadb) {
-    cache = leveldb::NewLRUCache(MAX_OPEN_FILES);
-    metadb_ = metadb;
-  }
+  void InodeCacheHandle_constructor(InodeCacheHandle *inodecache);
 
-  ~InodeCache() {
-    delete cache;
-  }
+  void InodeCacheHandle_constructor_mode(InodeCacheHandle *inodecachehandle,const tfs_meta_key_t key,
+                   const char *value,
+                   enum InodeAccessMode mode);
 
-  InodeCacheHandle* Insert(const tfs_meta_key_t key,
-                           const std::string &value);
+  void InodeCacheHandle_destructor(InodeCacheHandle *inodecachehandle);
+  
+  void InodeCacheHandle_init(InodeCacheHandle *);
+  
 
-  InodeCacheHandle* Get(const tfs_meta_key_t key,
-                        const InodeAccessMode mode);
+//class InodeCache {
+//public:
+  struct InodeCache{
+   LevelDBAdaptor* metadb_;
+   //leveldb::Cache* cache;
+  };
+  typedef struct InodeCache InodeCache;
+ 
+  void InodeCache_constructor(InodeCache *inodecache,LevelDBAdaptor *metadb);
 
-  void Release(InodeCacheHandle* handle);
+  void InodeCache_destructor(InodeCache *inodecache);
 
-  void WriteBack(InodeCacheHandle* handle);
+  InodeCacheHandle* InodeCache_Insert(InodeCache *,const tfs_meta_key_t key,
+                           const char *value);
 
-  void BatchCommit(InodeCacheHandle* handle1,
+  InodeCacheHandle* InodeCache_Get(InodeCache *,const tfs_meta_key_t key,
+                        const enum InodeAccessMode mode);
+
+  void InodeCache_Release(InodeCache *,InodeCacheHandle* handle);
+
+  void InodeCache_WriteBack(InodeCache *,InodeCacheHandle* handle);
+
+  void InodeCache_BatchCommit(InodeCache *,InodeCacheHandle* handle1,
                    InodeCacheHandle* handle2);
 
-  void Evict(const tfs_meta_key_t key);
+  void InodeCache_Evict(InodeCache *,const tfs_meta_key_t key);
 
-  friend void CleanInodeHandle(const leveldb::Slice key, void* value);
+  /*friend*/ //void InodeCache_CleanInodeHandle(InodeCache *,const leveldb::Slice key, void* value);
 
-};
 
-}
+
 
 #endif
+//#endif

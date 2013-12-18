@@ -3,49 +3,47 @@
  *
  *  Created on: Jul 19, 2011
  *      Author: kair
- */
+*/
 
 #ifndef PROPERTIES_H_
 #define PROPERTIES_H_
+#include <stdbool.h>
+#include <string.h>
+#include <stdio.h>
+//#include <map>      c++ map
 
-#include <string>
-#include <map>
+//namespace tablefs {
 
-namespace tablefs {
-
-class Properties {
-public:
-  explicit Properties();
-  virtual ~Properties();
-
-  Properties & operator=(const Properties &oldp);
-
-  std::string getProperty(const std::string &key);
-
-  std::string getProperty(const std::string &key, std::string defaultValue);
-
-  int getPropertyInt(const std::string &key, int defaultValue=0);
-
-  double getPropertyDouble(const std::string &key, double defaultValue=0);
-
-  bool getPropertyBool(const std::string &key, bool defaultValue=false);
-
-  void setProperty(const std::string &key, std::string value);
-
-  void setPropertyInt(const std::string &key, int value);
-
-  void load(const std::string &filename);
-
-  void store(const std::string &filename);
-
-  void parseOpts(int argc, char *argv[]);
-
-  void Report(FILE* logf);
-
-private:
-  std::map<std::string, std::string> plist;
+struct Properties {
+  //std::map<std::string, std::string> plist;       std::map handle  std::plist new structure
 };
+typedef struct Properties Properties;
+ /* explicit Properties();      We dont need it
+  virtual ~Properties();*/
 
-}
+  //Properties & operator=(const Properties &oldp);   Operator Overloading
+
+  char *Properties_getProperty(Properties *,const char *key);
+
+  char *Properties_getProperty_default(Properties *,const char *key, char *defaultValue);
+
+  int Properties_getPropertyInt(Properties *,const char *key, int defaultValue);
+
+  double Properties_getPropertyDouble(Properties *,const char *key, double defaultValue);
+
+  bool Properties_getPropertyBool(Properties *,const char *key, bool defaultValue);
+
+  void Properties_setProperty(Properties *,const char *key, char *value);
+
+  void Properties_setPropertyInt(Properties *,const char *key, int value);
+
+  void Properties_load(Properties *,const char *filename);
+
+  void Properties_store(Properties *,const char *filename);
+
+  void Properties_parseOpts(Properties *,int argc, char *argv[]);
+
+  void Properties_Report(Properties *,FILE* logf);
+//}
 
 #endif /* PROPERTIES_H_ */

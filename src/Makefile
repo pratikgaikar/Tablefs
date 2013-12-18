@@ -1,5 +1,5 @@
-CC = g++
-C = gcc
+CC = gcc
+C = g++
 
 #-----------------------------------------------
 # Uncomment exactly one of the lines labelled (A), (B), and (C) below
@@ -25,11 +25,12 @@ endif
 
 DEBUGFLAGS = 
 
-CFLAGS = -c -I. -I./include $(DEBUGFLAGS) $(PORT_CFLAGS) $(PLATFORM_CFLAGS) $(OPT) $(SNAPPY_CFLAGS)
-
+CFLAGS = -c -I. -I./include $(DEBUGFLAGS) $(PORT_CFLAGS) $(OPT) $(SNAPPY_CFLAGS)
+#$(PLATFORM_CFLAGS)
 LDFLAGS=$(PLATFORM_LDFLAGS) $(SNAPPY_LDFLAGS) $(GOOGLE_PERFTOOLS_LDFLAGS)
 
-FUSEFLAGS=`pkg-config fuse --cflags`
+FLAG=-D_FILE_OFFSET_BITS=64
+FUSEFLAGS=`pkg-config fuse --cflags` $(FLAG)
 
 FSLIBOJECTS=`pkg-config fuse --libs`
 
@@ -49,7 +50,7 @@ LIBOBJECTS = \
 ./util/command.o \
 ./util/testutil.o \
 ./util/myhash.o \
-./util/socket.o
+./util/socket.o \
 
 METADBOBJECTS = \
 ./metadb/metadb_fs.o \

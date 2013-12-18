@@ -7,55 +7,57 @@
 
 #ifndef TRACELOADER_H_
 #define TRACELOADER_H_
-#include <string>
-#include <vector>
+#include <string.h>
+//#include <vector>
 #include "util/allocator.h"
 
-namespace tablefs {
+//namespace tablefs {
 
 struct FileRecord {
   char* filename;
   char filetype;
 };
+typedef struct FileRecord FileRecord;
 
-class TraceLoader {
-private:
+struct TraceLoader {
   char** paths;
   char* filetypes;
   Allocator* allocator_;
   size_t num_paths;
   size_t num_dir_paths;
   size_t num_file_paths;
-  char* AddEntry(const char* filename, int size);
-
-public:
-  TraceLoader(Allocator* allocator);
-
-  virtual ~TraceLoader();
-
-  void LoadTrace(const char* filename);
-
-  int GetNumPaths() {
-    return num_paths;
-  }
-
-  int GetNumFilePaths() {
-    return num_file_paths;
-  }
-
-  int GetNumDirectoryPaths() {
-    return num_paths - num_file_paths;
-  }
-
-  char* GetPath(int index, char &filetype);
-
-  char* GetPath(int index);
-
-  char* GetDirPath(int dindex);
-
-  char* GetFilePath(int findex);
 };
+typedef struct TraceLoader TraceLoader;
+  
+  char* TraceLoader_AddEntry(TraceLoader *,const char* filename, int size);
 
-}
+  void TraceLoader_constructor(TraceLoader *,Allocator *allocator);
+
+  //virtual ~TraceLoader();
+
+  void TraceLoader_LoadTrace(TraceLoader *,const char* filename);
+
+  int TraceLoader_GetNumPaths(TraceLoader *traceloader) {
+    return traceloader->num_paths;
+  }
+
+  int TraceLoader_GetNumFilePaths(TraceLoader *traceloader) {
+    return traceloader->num_file_paths;
+  }
+
+  int TraceLoader_GetNumDirectoryPaths(TraceLoader *traceloader) {
+    return traceloader->num_paths - traceloader->num_file_paths;
+  }
+
+  char* TraceLoader_GetPath(TraceLoader *,int index, char* filetype);
+
+  char* TraceLoader_GetPath_default(TraceLoader *,int index);
+
+  char* TraceLoader_GetDirPath(TraceLoader *,int dindex);
+
+  char* TraceLoader_GetFilePath(TraceLoader *,int findex);
+
+
+//}
 
 #endif /* TRACELOADER_H_ */

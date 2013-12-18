@@ -1,3 +1,4 @@
+#ifdef SUPPORTED
 /*
  *   C++ sockets on Unix and Windows
  *   Copyright (C) 2002
@@ -370,3 +371,4 @@ void UDPSocket::leaveGroup(const string &multicastGroup) throw(SocketException) 
     throw SocketException("Multicast group leave failed (setsockopt())", true);
   }
 }
+#endif

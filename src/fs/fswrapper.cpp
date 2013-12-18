@@ -1,3 +1,4 @@
+#ifdef SUPPORTED
 #include "fs/fswrapper.h"
 #include <stdio.h>
 #include "fs/tablefs.h"
@@ -367,3 +368,4 @@ int TableFSTestWrapper::Stat(const char* path, struct stat *buf) {
 }
 
 }
+#endif

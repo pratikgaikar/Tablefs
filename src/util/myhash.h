@@ -9,10 +9,11 @@
 #define HASH_H_
 #include <stdint.h>
 
-namespace tablefs {
+
 
 extern uint64_t murmur64(const void * key, int len, uint64_t seed);
 
-}
+
 
 #endif /* HASH_H_ */
+
